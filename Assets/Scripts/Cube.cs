@@ -1,27 +1,27 @@
 using Assets.Scripts;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody), typeof(SpawnerCoubs))]
-public class Coub : MonoBehaviour
+[RequireComponent(typeof(Rigidbody), typeof(SpawnerCubes))]
+public class Cube : MonoBehaviour
 {
     [SerializeField] private float _forceExplosion;
     [SerializeField] private float _radiusExplosion;
     
-    private SpawnerCoubs _spawner;
+    private SpawnerCubes _spawner;
     private int _chanceSeparation = 100;
 
     public Rigidbody Rigidbody { get; private set; }
 
     private void Awake()
     {
-        _spawner = GetComponent<SpawnerCoubs>();
+        _spawner = GetComponent<SpawnerCubes>();
         Rigidbody = GetComponent<Rigidbody>();        
     }
 
     private void OnMouseUpAsButton()
     {
-        if (_spawner.TrySpawn(out Coub[] coubs, _chanceSeparation))
-            ScatterCoubs(coubs);
+        if (_spawner.TrySpawn(out Cube[] cubes, _chanceSeparation))
+            ScatterCoubs(cubes);
 
         Destroy(gameObject);
     }
@@ -32,9 +32,9 @@ public class Coub : MonoBehaviour
         _chanceSeparation = chanceSeparation;
     }
 
-    private void ScatterCoubs(Coub[] coubs)
+    private void ScatterCoubs(Cube[] cubes)
     {
-        foreach (Coub coub in coubs)
-            coub.Rigidbody.AddExplosionForce(_forceExplosion, transform.position, _radiusExplosion);
+        foreach (Cube cube in cubes)
+            cube.Rigidbody.AddExplosionForce(_forceExplosion, transform.position, _radiusExplosion);
     }
 }

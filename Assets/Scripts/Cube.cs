@@ -4,9 +4,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody), typeof(SpawnerCubes))]
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private float _forceExplosion;
-    [SerializeField] private float _radiusExplosion;
-    
+    [SerializeField, Min(1)] private float _forceExplosion;
+    [SerializeField, Min(1)] private float _radiusExplosion;
+
     private SpawnerCubes _spawner;
     private int _chanceSeparation = 100;
 
@@ -15,13 +15,15 @@ public class Cube : MonoBehaviour
     private void Awake()
     {
         _spawner = GetComponent<SpawnerCubes>();
-        Rigidbody = GetComponent<Rigidbody>();        
+        Rigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnMouseUpAsButton()
     {
         if (_spawner.TrySpawn(out Cube[] cubes, _chanceSeparation))
             ScatterCoubs(cubes);
+        else
+            Blow();
 
         Destroy(gameObject);
     }
@@ -30,11 +32,24 @@ public class Cube : MonoBehaviour
     {
         transform.localScale = scale;
         _chanceSeparation = chanceSeparation;
+
+        float dividerExplosion = scale.magnitude;        
+
+        _forceExplosion = _forceExplosion / dividerExplosion;
+        _radiusExplosion = _radiusExplosion / dividerExplosion;
     }
 
     private void ScatterCoubs(Cube[] cubes)
     {
         foreach (Cube cube in cubes)
-            cube.Rigidbody.AddExplosionForce(_forceExplosion, transform.position, _radiusExplosion);
+            cube.Rigidbody.AddForceAtPosition(Vector3.one, transform.position);
+    }
+
+    private void Blow()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, _radiusExplosion);
+
+        foreach (Collider hit in hits)
+            hit.attachedRigidbody?.AddExplosionForce(_forceExplosion, transform.position, _radiusExplosion, 1f, ForceMode.Impulse);
     }
 }

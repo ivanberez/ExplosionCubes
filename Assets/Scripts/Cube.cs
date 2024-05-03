@@ -1,7 +1,7 @@
 using Assets.Scripts;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody), typeof(SpawnerCubes))]
+[RequireComponent(typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
     [SerializeField, Min(1)] private float _forceExplosion;
@@ -13,14 +13,16 @@ public class Cube : MonoBehaviour
     public Rigidbody Rigidbody { get; private set; }
 
     private void Awake()
-    {
-        _spawner = GetComponent<SpawnerCubes>();
+    {        
         Rigidbody = GetComponent<Rigidbody>();
+        
+        if(_spawner == null)
+            _spawner = FindAnyObjectByType<SpawnerCubes>();
     }
 
     private void OnMouseUpAsButton()
     {
-        if (_spawner.TrySpawn(out Cube[] cubes, _chanceSeparation))
+        if (_spawner.TrySpawn(out Cube[] cubes, _chanceSeparation, transform))
             ScatterCoubs(cubes);
         else
             Blow();

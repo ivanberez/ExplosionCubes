@@ -12,7 +12,7 @@ namespace Assets.Scripts
 
         [SerializeField] private Cube _cube;        
 
-        public bool TrySpawn(out Cube[] cubes, int chanceSeparation)
+        public bool TrySpawn(out Cube[] cubes, int chanceSeparation, Transform progenitor)
         {
             bool hasSpawned = Random.Range(MinRandomRange, MaxRandomRange) <= chanceSeparation;
 
@@ -24,8 +24,8 @@ namespace Assets.Scripts
 
                 for (int i = 0; i < count; i++)
                 {
-                    cubes[i] = Instantiate(_cube, transform.position, Quaternion.identity);
-                    cubes[i].Init(transform.localScale / Divider, chanceSeparation / Divider);
+                    cubes[i] = Instantiate(_cube, progenitor.position, Quaternion.identity);
+                    cubes[i].Init(progenitor.localScale / Divider, chanceSeparation / Divider);
                 }
             }
             else
